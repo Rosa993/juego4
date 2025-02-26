@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Web Interactivo</title>
+  <!-- Importamos Chart.js para los gráficos -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Estilos generales */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      transition: background-color 0.3s ease;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    header {
+      background-color: #333;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+    }
+    h1 {
+      margin: 0;
+    }
+
+    /* Estilo del menú de navegación */
+    nav {
+      background-color: #333;
+      padding: 10px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    nav ul {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      justify-content: space-around;
+    }
+    nav ul li {
+      display: inline;
+    }
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      padding: 10px;
+      transition: background-color 0.3s;
+    }
+    nav ul li a:hover {
+      background-color: #575757;
+    }
+
+    /* Estilo del modo oscuro */
+    .dark-mode {
+      background-color: #2c2c2c;
+      color: white;
+    }
+    .dark-mode nav {
+      background-color: #222;
+    }
+    .dark-mode .container {
+      background-color: #3a3a3a;
+    }
+
+    /* Tarjetas informativas */
+    .card {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+      flex: 1;
+      max-width: 300px;
+      margin: 10px;
+    }
+
+    /* Estilo de los gráficos */
+    .chart-container {
+      margin-top: 30px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .chart-container canvas {
+      max-width: 500px;
+      max-height: 500px;
+      width: 100%;
+      margin: 20px;
+    }
+
+    /* Botón de modo oscuro */
+    .mode-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: #333;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .mode-toggle:hover {
+      background-color: #575757;
+    }
+
+    /* Notificaciones */
+    .notification {
+      background-color: #4caf50;
+      color: white;
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <h1>Dashboard Web Interactivo - Quetzales</h1>
+  </header>
+
+  <!-- Modo oscuro -->
+  <button class="mode-toggle">Modo Oscuro</button>
+
+  <!-- Menú de navegación -->
+  <nav>
+    <ul>
+      <li><a href="#">Inicio</a></li>
+      <li><a href="#">Estadísticas</a></li>
+      <li><a href="#">Gastos</a></li>
+      <li><a href="#">Hábitos</a></li>
+      <li><a href="#">Clima</a></li>
+    </ul>
+  </nav>
+
+  <!-- Notificaciones dinámicas -->
+  <div id="notification" class="notification">
+    ¡Nueva notificación! Los datos se actualizaron correctamente.
+  </div>
+
+  <div class="container">
+    <!-- Tarjetas informativas -->
+    <div class="card">
+      <h3>Estadísticas de uso</h3>
+      <p>Visualiza el uso de tus redes sociales de forma gráfica.</p>
+    </div>
+    <div class="card">
+      <h3>Seguimiento de hábitos</h3>
+      <p>Mide tus hábitos diarios y cómo estás mejorando.</p>
+    </div>
+    <div class="card">
+      <h3>Control de gastos</h3>
+      <p>Monitorea tus gastos mensuales en Quetzales.</p>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="chart-container">
+      <div>
+        <canvas id="myChart"></canvas>
+      </div>
+      <div>
+        <canvas id="myChart2"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script para los gráficos y funcionalidades -->
+  <script>
+    // Modo Oscuro
+    const modeToggle = document.querySelector(".mode-toggle");
+    modeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+    });
+
+    // Mostrar notificación dinámica
+    const notification = document.getElementById("notification");
+    setTimeout(() => {
+      notification.style.display = "block";
+      setTimeout(() => {
+        notification.style.display = "none";
+      }, 3000);
+    }, 2000);
+
+    // Gráfico 1 (barras - Gastos en Quetzales)
+    const ctx1 = document.getElementById("myChart").getContext("2d");
+    const myChart = new Chart(ctx1, {
+      type: "bar",
+      data: {
+        labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo"],
+        datasets: [{
+          label: "Gastos mensuales (Q)",
+          data: [1500, 2000, 2500, 3000, 3500],
+          backgroundColor: "rgba(75, 192, 192, 0.2)",
+          borderColor: "rgba(75, 192, 192, 1)",
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) { return "Q" + value; } // Agrega el símbolo de Quetzales
+            }
+          }
+        }
+      }
+    });
+
+    // Gráfico 2 (línea - Seguimiento de hábitos)
+    const ctx2 = document.getElementById("myChart2").getContext("2d");
+    const myChart2 = new Chart(ctx2, {
+      type: "line",
+      data: {
+        labels: ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"],
+        datasets: [{
+          label: "Seguimiento de hábitos",
+          data: [3, 4, 5, 2, 4],
+          backgroundColor: "rgba(153, 102, 255, 0.2)",
+          borderColor: "rgba(153, 102, 255, 1)",
+          borderWidth: 1,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
